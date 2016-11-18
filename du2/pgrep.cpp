@@ -1,12 +1,12 @@
-/*
-#include <vector>
-#include <regex>
-*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
 #include <iostream>
 #include <string.h>
+#include <vector>
+#include <regex>
+#include <mutex>
+#include <thread>
 // Do not use!!!!
 //using namespace std;
 /*
@@ -81,24 +81,35 @@ char *read_line(int *res) {
 
 }
 
+int calc_score (int ID) {
+	printf("thread %i\n", ID);
+	return ID;
+}
+
+char *line;
+std::vector<std::mutex *> zamky;
 int main(int argc, char* argv[]){
 	if (argc < 4 || argc%2) {
 		fprintf(stderr, "Invalid arguments\n");
 		return -1;
 	}
-	int* score = parse_score(argc, argv);
-	char** regs = parse_reg(argc, argv);
-	unsigned th_number = (argc-1)/2;
-	char *line;
+
+	int* score = parse_score(argc, argv); // array of scores
+	char** regs = parse_reg(argc, argv); // array of regular expresions
+	unsigned threads_number = (argc-1)/2; // number of needed threads
+
+	std::vector <std::thread *> threads; // vector of threads
+
+	/* Starting threads */
+	for(unsigned i=0; i < threads_number; i++) {
+		std::thread *new_thread = new std::thread (calc_score, i);
+		threads.push_back(new_thread);
+		printf("Score: %i, regex: %s\n", score[i], regs[i]);
+	}
+
 	int res;
 	while ((line = read_line(&res)) != NULL) {
-		for(unsigned i=0; i < th_number; i++) {
-			printf("Score: %i, regex: %s\n", score[i], regs[i]);
-//			regex re1(argv[1]);
-//			if (regex_match(input[i],re1))
-//			printf("%s\n",input[i]);
-
-		}
+		// TODO
 	}
 	free(score);
 	free(regs);
