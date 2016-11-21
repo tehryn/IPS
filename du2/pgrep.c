@@ -1,3 +1,4 @@
+// Ve dvojci s: Martin Pumr, xpumr00 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
